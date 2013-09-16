@@ -1,47 +1,51 @@
 var App = (function() {
-    var KEY = 'stickyNotesDemoData';
+    
     var notes = {};
-
-    function init() {
-        if (!('localStorage' in window)) {
-            alert ('localStorage is not supported!');
-            return;
-        } 
-        setEvents();
-        
-        loadAll();
-        for (var key in notes) {
-            notes[key].render();
+    var currentlyEdited;
+    
+     /**
+     * localStorage manipulation.
+     */
+    var Storage = (function() {
+        var KEY = 'stickyNotesDemoData';
+        return {
+            save: function(value) {
+                localStorage.setItem(KEY, value);
+            },
+            load: function() {
+                return localStorage.getItem(KEY);
+            },
+            remove: function() {
+                localStorage.clear()
+            }
         }
+    })();
+    
+    function saveToStorage() {
+        Storage.save(JSON.stringify(notes));
     }
     
-    function setEvents() {
-        $('#createNote').on('tap', function() {
-            var note = new App.StickyNote();
-            note.render();
-            notes[note.id] = note;
-        });
-        $('#saveAll').on('tap', saveAll);
-        $('#deleteNote').on('tap', function() {
-                
-        });
-
-        $(document).delegate('#minMaxNote', 'tap', App.toggleMinNote);
-         
-         $(document).delegate('#deleteNote', 'tap', App.removeNote);
-    }
-    
-    function loadAll() {
-        var data = App.Storage.load(KEY);
+    function init() {
+        setUIEvents();
+        
+        var data = Storage.load();
         if (data) {
             notes = JSON.parse(data);
             for (var key in notes) {
                 notes[key] = new App.StickyNote(notes[key]);
+                notes[key].render();
             }
         }
     }
-    function saveAll() {
-        App.Storage.save(KEY, JSON.stringify(notes));
+    
+    function setUIEvents() {
+        $('#createNoteBtn').on('tap', createNote);
+        $('#saveAllBtn').on('tap', saveToStorage);
+        
+        $(document).delegate('#saveNoteBtn', 'tap', updateNote);
+        $(document).delegate('#minMaxNoteBtn', 'tap', toggleMinNote);
+        $(document).delegate('#deleteNoteBtn', 'tap', removeNote);
+        $(document).delegate('.note', 'doubletap', editNote);
     }
     
     function getNote(id) {
@@ -50,21 +54,20 @@ var App = (function() {
         }
         return false;
     }
-    function removeNote(id) {
-        if (!!App.currentlyEdited) {
-            App.getNote(App.currentlyEdited).remove(); 
-            delete notes[id];
-            App.Storage.remove(id);
-	        App.save();
+    function removeNote() {
+        if (!!currentlyEdited) {
+            getNote(currentlyEdited).remove(); 
+            delete notes[currentlyEdited];
+            saveToStorage();
             $.mobile.changePage('#', {transition: 'flip'});
         }
     }
     function updateNote(sender) {
-        if ($('#newNoteTitle').val().trim() != '' && $('#newNoteText').val().trim() != '') {
-            if ($(sender).data('edit') == true) {
-                notes[App.currentlyEdited].title = $('#newNoteTitle').val();
-                notes[App.currentlyEdited].text = $('#newNoteText').val();
-                notes[App.currentlyEdited].render();
+        if ($('#newNoteTitle').val().trim() !== '' && $('#newNoteText').val().trim() !== '') {
+            if ($(sender.currentTarget).data('edit') === true) {
+                notes[currentlyEdited].title = $('#newNoteTitle').val();
+                notes[currentlyEdited].text = $('#newNoteText').val();
+                notes[currentlyEdited].render();
             } else {
                  var newNote = new App.StickyNote({
                     x: 40,
@@ -76,18 +79,18 @@ var App = (function() {
                 notes[newNote.id] = newNote;
                 notes[newNote.id].render();
             }
-            App.save();
+            saveToStorage();
             
-            $('#saveNote').data('edit', false);
-            App.currentlyEdited = '';
+            $('#saveNoteBtn').data('edit', false);
+            currentlyEdited = '';
             $.mobile.changePage('#', {transition: 'flip'});
         } else {
-            if ($('#newNoteTitle').val().trim() == '') {
+            if ($('#newNoteTitle').val().trim() === '') {
                 $('#newNoteTitle').parent().addClass('error');
             } else {
                 $('#newNoteTitle').parent().removeClass('error');
             }
-            if ($('#newNoteText').val().trim() == '') {
+            if ($('#newNoteText').val().trim() === '') {
                 $('#newNoteText').parent().addClass('error');
             } else {
                 $('#newNoteText').parent().removeClass('error');
@@ -95,30 +98,30 @@ var App = (function() {
         }
     }
     function createNote() {
-        $('#deleteNote, #minMaxNote').hide();
+        $('#deleteNoteBtn, #minMaxNoteBtn').hide();
         $('#newNoteTitle').val('');
         $('#newNoteText').val('');
+        $.mobile.changePage('#createNewDialog', { transition: 'flip' });
     }
     function editNote(e) {
-        App.currentlyEdited = $(e.delegateTarget).attr('id');
-        var note = App.getNote(App.currentlyEdited);
-        $('#deleteNote, #minMaxNote').show();
-        
+        currentlyEdited = $(e.currentTarget).attr('id');
+        var note = getNote(currentlyEdited);
+        $('#deleteNoteBtn, #minMaxNoteBtn').show();
         if (note.minimized) {
-                $('#minMaxNote .ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
-                $('#minMaxNote').find('.ui-btn-text').text('Maximize');
+            $('#minMaxNoteBtn .ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
+            $('#minMaxNoteBtn').find('.ui-btn-text').text('Maximize');
         } else {
-            $('#minMaxNote .ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
-            $('#minMaxNote').find('.ui-btn-text').text('Minimize');
+            $('#minMaxNoteBtn .ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
+            $('#minMaxNoteBtn').find('.ui-btn-text').text('Minimize');
         }
             
-        $('#saveNote').data('edit', true);
+        $('#saveNoteBtn').data('edit', true);
         $('#newNoteTitle').val(note.title);
         $('#newNoteText').val(note.text);
         $.mobile.changePage('#createNewDialog', {transition: 'flip'});
     }
     function toggleMinNote() {
-        var note = getNote(App.currentlyEdited);
+        var note = getNote(currentlyEdited);
         if (note.minimized) {
             note.minimized = false;
             note.render();
@@ -128,17 +131,21 @@ var App = (function() {
             note.render();
             $.mobile.changePage('#', {transition: 'slidedown'});
         } 
+        saveToStorage();
     }
     
+	$(document).ready(function() {
+	    if (!('localStorage' in window)) {
+            $('div[data-role=page] div[data-role=content]').html('localStorage not supported! <a data-role="button" href="http://google.com/chrome">Get Chrome!</a>');
+            throw new Error('localStorage is not supported! Get Google Chrome!');
+        } 
+        
+		App.container = $('#container');
+		App.container.height($(document).height() - $('#header').height());
+		App.init();
+	});
+			
     return {
-        init: init,
-        getNote: getNote,
-        removeNote: removeNote,
-        createNote: createNote,
-        editNote: editNote,
-        updateNote: updateNote,
-        toggleMinNote: toggleMinNote,
-        save: saveAll
-    }
+        init: init
+    };
 })();
-

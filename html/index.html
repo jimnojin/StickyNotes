@@ -13,41 +13,30 @@
 		<link href="css/sticky.css" rel="stylesheet">
 		<script src="js/app.js"></script>
 		<script src="js/sticky.js"></script>
-        <script src="js/storage.js"></script>
-        
-		<script>
-			$(document).ready(function() {
-				App.container = $('#container');
-				App.container.height($(document).height() - $('#header').height());
-				App.init();
-			});
-		</script>
 	</head>
 	
-	<body>
+	<body data-theme="b">
 	    <div data-role="page">
-          <div data-role="header">
-            <h1>Sticky!</h1>
-          </div>
-          <div data-role="content">
-            <a href="#createNewDialog" data-role="button" data-theme="a" data-transition="flip" onclick="App.createNote()">Create</a>
-            <a href="#" data-role="button" onclick="App.save()">Save!</a>
-            <div id="container">
-			
-		    </div>
-          </div>
-        </div>
-        
-        <div data-role="dialog" id="createNewDialog" data-theme="a">
-            <div data-role="header" data-nobackbtn="true">
-                <h1></span>Add/Edit note</h1> 
-                <a id="minMaxNote" data-state="max" data-icon="arrow-d" class="ui-btn-left" href="" data-role="button">Minimize</a> 
-                <a id="deleteNote" class="ui-btn-right" href="" data-role="button" data-icon="delete" data-iconpos="right">Delete</a>
+            <div data-role="header">
+                <h1>Sticky!</h1>
             </div>
             <div data-role="content">
-                <input id="newNoteTitle" placeholder="Enter Title" tabindex="0" type="text" minlength="1"/>
-                <input id="newNoteText" placeholder="Enter Text" tabindex="1"  type="text" minlength="1"/>
-                <a href="#" id="saveNote" data-role="button" data-edit="false" onclick="return App.updateNote(this);"  tabindex="2">Save</a>
+                <a href="#" id="createNoteBtn" data-role="button">Create</a>
+                <a href="#" id="saveAllBtn" data-role="button">Save!</a>
+                <div id="container"></div>
+            </div>
+        </div>
+        
+        <div data-role="dialog" id="createNewDialog">
+            <div data-role="header" data-nobackbtn="true">
+                <h1></span>Add/Edit note</h1> 
+                <a id="minMaxNoteBtn" data-state="max" data-icon="arrow-d" class="ui-btn-left" href="" data-role="button" data-clear-btn="true">Minimize</a> 
+                <a id="deleteNoteBtn" class="ui-btn-right" href="" data-role="button" data-icon="delete" data-iconpos="right" data-clear-btn="true">Delete</a>
+            </div>
+            <div data-role="content">
+                <input id="newNoteTitle" placeholder="Enter Title" tabindex="0" type="text"/>
+                <textarea id="newNoteText" placeholder="Enter Text" tabindex="1"  rows="3"></textarea>
+                <a href="#" id="saveNoteBtn" data-role="button" data-edit="false"  tabindex="2">Save</a>
                 <a href="#" data-role="button" data-rel="back"  tabindex="3">Cancel</a>
             </div>
         </div>

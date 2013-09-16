@@ -46,7 +46,6 @@
             	        that.y = ui.offset.top;
             	    }
                 });
-            	that.setEvents();
 		    }
 		    if (this.minimized) {
         	    elem.addClass('minimized', 'fast');
@@ -58,33 +57,8 @@
         	    $('.title, .text', elem).show();
         	}
 		},
-		setEvents: function() {
-		    var that = this;
-		    var elem = $('#' + this.id);
-		    elem.on('doubletap', App.editNote);
-		},
 		remove: function() {
 		    $('#' + this.id).fadeOut('fast', function() { $(this).remove() });
-
-		},
-		
-		minmaxClick: function(e) {
-		    /*
-		    var elem = $('#' + this.id);
-		    if (this.minimized) {
-		        this.minimized = false;
-		        $('.mintitle', elem).html('');
-    		    $(elem).animate({height: 150 }, 'fast', function() {
-    		        elem.find('.title, .text').show();
-    		    });
-		    } else {
-		        this.minimized = true;
-		        elem.find('.title, .text').hide();
-    		    elem.animate({height: $('.header', elem).height() }, 'fast', function() {
-    		        $('.mintitle', $(this)).html($('.title', $(this)).html());
-    		    });
-		    }
-		    */
 		}
 	}
     

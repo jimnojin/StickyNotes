@@ -11,10 +11,14 @@ html, body {
     padding: 0 5px;
 }
 
-div[role=main] .ui-btn {
+div[data-role=dialog] .ui-btn {
     float: left;
-    width: 48%
+    width: 49%
 }
+#minMaxNoteBtn, #deleteNoteBtn {
+    width: auto;
+}
+
 div[data-role=dialog] a[data-iconpos=notext] {
     display: none;
 }
@@ -139,5 +143,4 @@ button:hover {
 
 .ui-input-text.error {
     border: 1px solid red;
-    color: red;
 }

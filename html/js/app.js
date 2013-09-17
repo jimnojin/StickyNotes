@@ -46,6 +46,7 @@ var App = (function() {
         $(document).delegate('#minMaxNoteBtn', 'tap', toggleMinNote);
         $(document).delegate('#deleteNoteBtn', 'tap', removeNote);
         $(document).delegate('.note', 'doubletap', editNote);
+        $(document).delegate('.note', 'dragstop', saveToStorage);
     }
     
     function getNote(id) {
@@ -69,7 +70,7 @@ var App = (function() {
                 notes[currentlyEdited].text = $('#newNoteText').val();
                 notes[currentlyEdited].render();
             } else {
-                 var newNote = new App.StickyNote({
+                var newNote = new App.StickyNote({
                     x: 40,
                     y: 140,
                     title: $('#newNoteTitle').val(),
@@ -85,19 +86,20 @@ var App = (function() {
             currentlyEdited = '';
             $.mobile.changePage('#', {transition: 'flip'});
         } else {
+            if ($('#newNoteText').val().trim() === '') {
+                $('#newNoteText').addClass('error').focus();
+            } else {
+                $('#newNoteText').removeClass('error');
+            }
             if ($('#newNoteTitle').val().trim() === '') {
-                $('#newNoteTitle').parent().addClass('error');
+                $('#newNoteTitle').parent().addClass('error').focus();
             } else {
                 $('#newNoteTitle').parent().removeClass('error');
-            }
-            if ($('#newNoteText').val().trim() === '') {
-                $('#newNoteText').parent().addClass('error');
-            } else {
-                $('#newNoteText').parent().removeClass('error');
             }
         }
     }
     function createNote() {
+        $('#saveNoteBtn').data('edit', false);
         $('#deleteNoteBtn, #minMaxNoteBtn').hide();
         $('#newNoteTitle').val('');
         $('#newNoteText').val('');
@@ -107,9 +109,16 @@ var App = (function() {
         currentlyEdited = $(e.currentTarget).attr('id');
         var note = getNote(currentlyEdited);
         $('#deleteNoteBtn, #minMaxNoteBtn').show();
+        $('#newNoteTitle').parent().removeClass('error');
+        $('#newNoteText').removeClass('error');
         if (note.minimized) {
-            $('#minMaxNoteBtn .ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
-            $('#minMaxNoteBtn').find('.ui-btn-text').text('Maximize');
+            // check if elem is already initialized by jQM
+            if ($('#minMaxNoteBtn .ui-icon').length > 0) {
+                $('#minMaxNoteBtn .ui-icon').removeClass('ui-icon-arrow-d').addClass('ui-icon-arrow-u');
+                $('#minMaxNoteBtn .ui-btn-text').text('Maximize');
+            } else {
+                $('#minMaxNoteBtn').attr('data-icon', 'arrow-u').text('Maximize');
+            }
         } else {
             $('#minMaxNoteBtn .ui-icon').removeClass('ui-icon-arrow-u').addClass('ui-icon-arrow-d');
             $('#minMaxNoteBtn').find('.ui-btn-text').text('Minimize');

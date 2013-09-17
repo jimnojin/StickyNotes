@@ -21,8 +21,7 @@
                 <h1>Sticky!</h1>
             </div>
             <div data-role="content">
-                <a href="#" id="createNoteBtn" data-role="button">Create</a>
-                <a href="#" id="saveAllBtn" data-role="button">Save!</a>
+                <a href="#" id="createNoteBtn" data-role="button">New note</a>
                 <div id="container"></div>
             </div>
         </div>
@@ -30,12 +29,12 @@
         <div data-role="dialog" id="createNewDialog">
             <div data-role="header" data-nobackbtn="true">
                 <h1></span>Add/Edit note</h1> 
-                <a id="minMaxNoteBtn" data-state="max" data-icon="arrow-d" class="ui-btn-left" href="" data-role="button" data-clear-btn="true">Minimize</a> 
-                <a id="deleteNoteBtn" class="ui-btn-right" href="" data-role="button" data-icon="delete" data-iconpos="right" data-clear-btn="true">Delete</a>
+                <a id="minMaxNoteBtn" data-state="max" data-icon="arrow-d" class="ui-btn-left" href="" data-role="button">Minimize</a> 
+                <a id="deleteNoteBtn" class="ui-btn-right" href="" data-role="button" data-icon="delete" data-iconpos="right">Delete</a>
             </div>
             <div data-role="content">
-                <input id="newNoteTitle" placeholder="Enter Title" tabindex="0" type="text"/>
-                <textarea id="newNoteText" placeholder="Enter Text" tabindex="1"  rows="3"></textarea>
+                <input id="newNoteTitle" placeholder="Enter Title" tabindex="0" type="text" data-clear-btn="true"/>
+                <textarea id="newNoteText" placeholder="Enter Text" tabindex="1"  rows="3" data-clear-btn="true"></textarea>
                 <a href="#" id="saveNoteBtn" data-role="button" data-edit="false"  tabindex="2">Save</a>
                 <a href="#" data-role="button" data-rel="back"  tabindex="3">Cancel</a>
             </div>

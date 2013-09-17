@@ -11,7 +11,7 @@
 	    	style: noteStyles[Math.round(Math.random() * (noteStyles.length - 1))],
 	    	minimized: false
 	    }, cfg);
-	    
+
 		this.id = config.id;
 		this.x = config.x;
 		this.y = config.y;
@@ -22,7 +22,7 @@
 	}
 	
 	Note.prototype = {
-		render: function() {
+	    render: function() {
 		    var that = this;
 		    var elem = $('#' + this.id);
 		    if (elem.length > 0) {
@@ -35,36 +35,36 @@
 		        }
 		    } else {
 		        var rotation = Math.round(Math.random() * 20 - 10); // random angle (-10..10)deg rotation
-	    	    var html = ['<div class="note ', this.style, '" id="', this.id, '" data-state="max" style="display: none; top: ', this.y, 'px; left: ', this.x, 'px;  -webkit-transform: rotate(', rotation, 'deg);">',
-	    				    '<div class="header">',
-	    				        '<div class="pin"></div>',
-	    					    '<div class="mintitle"></div>',
-	    				    '</div>',
-	    				    '<div class="title">', this.title, '</div>',
-	    				    '<div class="text">', this.text, '</div>',
-	    			    '</div>'
-	    	    	].join('');
-	    	App.container.append(html);
-	    	elem = $('#' + this.id);
-	    	
-	    	elem.fadeIn('fast');
-		    elem.draggable({
-	    	    containment: "parent",
-	      	    drag: function(e, ui) {
-	    	        that.x = ui.offset.left;
-	    	        that.y = ui.offset.top;
-	    	    }
-	        });
+    		    var html = ['<div class="note ', this.style, '" id="', this.id, '" data-state="max" style="display: none; top: ', this.y, 'px; left: ', this.x, 'px;  -webkit-transform: rotate(', rotation, 'deg);">',
+            				    '<div class="header">',
+            				        '<div class="pin"></div>',
+            					    '<div class="mintitle"></div>',
+            				    '</div>',
+            				    '<div class="title">', this.title, '</div>',
+            				    '<div class="text">', this.text, '</div>',
+            			    '</div>'
+            	    	].join('');
+            	App.container.append(html);
+            	elem = $('#' + this.id);
+            	
+            	elem.fadeIn('fast');
+        	    elem.draggable({
+            	    containment: "parent",
+              	    drag: function(e, ui) {
+            	        that.x = ui.offset.left;
+            	        that.y = ui.offset.top;
+            	    }
+                });
 		    }
 		    if (this.minimized) {
-		    elem.addClass('minimized', 'fast');
-		    $('.title, .text', elem).hide();
-		    $('.mintitle', elem).html(this.title);
-		} else {
-		    elem.removeClass('minimized', 'fast');
-		    $('.mintitle', elem).html('');
-		    $('.title, .text', elem).show();
-		}
+        	    elem.addClass('minimized', 'fast');
+        	    $('.title, .text', elem).hide();
+        	    $('.mintitle', elem).html(this.title);
+        	} else {
+        	    elem.removeClass('minimized', 'fast');
+        	    $('.mintitle', elem).html('');
+        	    $('.title, .text', elem).show();
+        	}
 		},
 		remove: function() {
 		    $('#' + this.id).fadeOut('fast', function() { $(this).remove() });

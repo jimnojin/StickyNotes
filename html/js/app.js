@@ -152,7 +152,13 @@ var App = (function() {
 		App.container = $('#container');
 		App.container.height($(document).height() - $('#header').height());
 		App.init();
-	});
+		
+		$(window).bind("orientationchange", function(e){
+		    if (e && e.preventDefault) e.preventDefault();
+		    if (e && e.cancelBubble) e.cancelBubble();
+		    return false;
+		});
+    });
 			
     return {
         init: init
